@@ -19,17 +19,18 @@ const diffClazz = function (oldStr, newStr) {
             newEndIdx,
             count: 0
         };
-        const eachMatch = [];
+        let lastMatch = {};
+        // 优化数据结构
+        let curMatch = {};
         for (let i = oldStartIdx; i < oldEndIdx; i++) {
-            eachMatch[i] = new Array(newEndIdx - newStartIdx + 1).fill(0);
             for (let j = newStartIdx; j < newEndIdx; j++) {
-                eachMatch[i][j] = 0;
+                curMatch[`${i}&${j}`] = 0;
                 if (oldStr[i] === newStr[j]) {
-                    if (i > oldStartIdx && j > newStartIdx && eachMatch[i - 1][j - 1]) {
-                        eachMatch[i][j] = eachMatch[i - 1][j - 1];
+                    if (i > oldStartIdx && j > newStartIdx && lastMatch[`${i-1}&${j-1}`]) {
+                        curMatch[`${i}&${j}`] = lastMatch[`${i-1}&${j-1}`];
                     }
-                    eachMatch[i][j]++;
-                    const curMatchCount = eachMatch[i][j];
+                    curMatch[`${i}&${j}`]++;
+                    const curMatchCount = curMatch[`${i}&${j}`];
                     if(curMatchCount > bestMatch.count) {
                         bestMatch = {
                             type: 'equal',
@@ -42,6 +43,8 @@ const diffClazz = function (oldStr, newStr) {
                     }
                 }
             }
+            lastMatch = curMatch;
+            curMatch = {};
         }
         if (bestMatch.count) {
             if (oldStartIdx < bestMatch.oldStartIdx || newStartIdx < bestMatch.newStartIdx) {
