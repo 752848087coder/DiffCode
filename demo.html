@@ -3,11 +3,9 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
-	<title>jsdifflib demo</title>
 	<link rel="stylesheet" type="text/css" href="diffview.css"/>
 	<script type="text/javascript" src="diff.js"></script>
 	<script type="text/javascript" src="diffview.js"></script>
-	<script type="text/javascript" src="difflib.js"></script>
 <style type="text/css">
 body {
 	font-size: 12px;
@@ -50,26 +48,20 @@ label:hover {
 <script type="text/javascript">
 
 function diffUsingJS(viewType) {
-	"use strict";
-	var byId = function (id) { return document.getElementById(id); },
-		base = difflib.stringAsLines(byId("baseText").value),
-		newtxt = difflib.stringAsLines(byId("newText").value),
-		sm = new difflib.SequenceMatcher(base, newtxt),
-		opcodes = sm.get_opcodes(),
-		diffoutputdiv = byId("diffoutput"),
-		contextSize = byId("contextSize").value;
-	console.log(opcodes);
-	new diffClazz(base, newtxt).getSteps();
+	var byId = function (id) { 
+		return document.getElementById(id);
+	};
+	let base = diffClazz.SplitToLines(byId("baseText").value);
+	let newtxt = diffClazz.SplitToLines(byId("newText").value);
+	let diffoutputdiv = byId("diffoutput");
+	const steps = new diffClazz(base, newtxt).getSteps();
 	diffoutputdiv.innerHTML = "";
-	contextSize = contextSize || null;
-
 	diffoutputdiv.appendChild(diffview.buildView({
 		baseTextLines: base,
 		newTextLines: newtxt,
-		opcodes: opcodes,
+		opcodes: steps,
 		baseTextName: "Base Text",
 		newTextName: "New Text",
-		contextSize: contextSize,
 		viewType: viewType
 	}));
 }
@@ -77,10 +69,7 @@ function diffUsingJS(viewType) {
 </script>
 </head>
 <body>
-	<h1 class="top"><a href="http://github.com/cemerick/jsdifflib">jsdifflib</a> demo</h1>
-	<div class="top">
-		<strong>Context size (optional):</strong> <input type="text" id="contextSize" value="" />
-	</div>
+	<h1 class="top">DiffCode demo</h1>
 	<div class="textInput">
 		<h2>Base Text</h2>
 		<textarea id="baseText"></textarea>
@@ -91,7 +80,7 @@ function diffUsingJS(viewType) {
 	</div>
 	<div class="viewType">
 		<input type="radio" name="_viewtype" id="sidebyside" onclick="diffUsingJS(0);" /> <label for="sidebyside">Side by Side Diff</label>
-		&nbsp; &nbsp;
+
 		<input type="radio" name="_viewtype" id="inline" onclick="diffUsingJS(1);" /> <label for="inline">Inline Diff</label>
 	</div>
 	<div id="diffoutput"> </div>

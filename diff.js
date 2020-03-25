@@ -5,6 +5,7 @@ const diffClazz = function (oldStr, newStr) {
     this.getSteps = function() {
         this.findLongestMatch(0, this.oldStr.length, 0, this.newStr.length);
         console.log(this.matchs);
+        return this.matchs.map(i => Object.values(i).slice(0,5));
     };
     this.findLongestMatch = function(oldStartIdx, oldEndIdx, newStartIdx, newEndIdx) {
         console.log(...arguments);
